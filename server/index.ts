@@ -1,5 +1,4 @@
 import express from "express";
-import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -8,13 +7,9 @@ const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
-  const server = createServer(app);
 
-  // Serve static files from dist/public in production
-  const staticPath =
-    process.env.NODE_ENV === "production"
-      ? path.resolve(__dirname, "public")
-      : path.resolve(__dirname, "..", "dist", "public");
+  // Serve static files from the built `dist` folder (Vite build)
+  const staticPath = path.resolve(process.cwd(), "dist");
 
   app.use(express.static(staticPath));
 
@@ -23,9 +18,9 @@ async function startServer() {
     res.sendFile(path.join(staticPath, "index.html"));
   });
 
-  const port = process.env.PORT || 3000;
+  const port = Number(process.env.PORT) || 3000;
 
-  server.listen(port, () => {
+  app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
   });
 }
